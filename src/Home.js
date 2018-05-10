@@ -57,7 +57,7 @@ export default class Home extends Component {
                     itemLayout="horizontal"
                     dataSource={this.state.articles}
                     renderItem={item => {
-                    let date = new Date(item.postTime);
+                    let date = new Date(item.postTime * 1000);
                     let dateStr = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}   ${date.getHours()}:${date.getMinutes()}`;
                     return (
                     <List.Item>

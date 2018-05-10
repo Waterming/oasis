@@ -34,12 +34,20 @@ class Publish extends Component {
     }
     handleSubmit = (e) => {
         e.preventDefault();
+        if(typeof(webExtensionWallet) === "undefined"){
+            alert('请安装 插件')
+            return;
+        }
         const articleData = {
             title: this.props.form.getFieldsValue().title,
             contents: this.smde.value(),
             autor: this.props.form.getFieldsValue().autor,
         };
-        let callArgs = "[\"" + articleData.title + "\",\"" + articleData.autor + "\",\"" + articleData.contents + "\"]";
+        let argArray = new Array();
+        argArray.push(articleData.title);
+        argArray.push(articleData.autor);
+        argArray.push(articleData.contents);
+        let callArgs = JSON.stringify(argArray);
         nebPay.call(dappAddress, "0", "save", callArgs, {    //使用nebpay的call接口去调用合约,
             listener: function(res){console.log("response of push: " + res)}
         });

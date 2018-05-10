@@ -23,7 +23,7 @@ export default class Article extends Component {
             listener: function(res){
                 const article = JSON.parse(res.result);
                 console.log(article)
-                let date = new Date(article.postTime);
+                let date = new Date(article.postTime * 1000);
                 let dateStr = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}  ${date.getHours()}:${date.getMinutes()}`;
                 document.getElementById('content').innerHTML = marked(article.content);
                 self.setState({
@@ -36,6 +36,10 @@ export default class Article extends Component {
         });
     }
     goodPay(address,author) {
+        if(typeof(webExtensionWallet) === "undefined"){
+            alert('请安装 插件')
+            return;
+        }
         var serialNumber = nebPay.pay(address, 1, {
             qrcode: {
                 showQRCode: false
