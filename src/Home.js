@@ -33,11 +33,11 @@ export default class Home extends Component {
         nebPay.simulateCall(dappAddress, "0", "searchByTitleKeywords", callArgs, {    //使用nebpay的simulateCall接口去执行get查询, 模拟执行.不发送交易,不上链
             listener: function(res){
                 const articles = JSON.parse(res.result);
-                console.log('aaaaa',articles)
-                // self.setState({
-                //     articles,
-                //     total: articles.length
-                // })
+                console.log(articles[0])
+                self.setState({
+                    articles,
+                    total: articles.length
+                })
             }      //指定回调函数
         });
     }
