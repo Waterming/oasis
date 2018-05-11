@@ -22,6 +22,12 @@ html, body, #root {
     background-color: #fff;
     box-shadow: 0 10px 40px 0 rgba(62, 57, 107, 0.07), 0 2px 9px 0 rgba(62, 57, 107, 0.06);
   }
+.logo {
+  font-size: 28px;
+  margin-left: 10px;
+  font-weight: bold;
+  color: #009a61;
+}
 .tag span {
   color: #009a61;
   margin-right: 20px;

@@ -11,7 +11,7 @@ function App() {
     <Router>
       <div style={{height: '100%'}}>
       <header>
-        <div className="logo"></div>
+        <div className="logo">Oasis Blog</div>
         <nav>
           <Link className="navitem" to="/publish" >发表</Link>
         </nav>
