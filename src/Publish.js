@@ -1,19 +1,24 @@
 import React, {Component} from 'react';
 import SimpleMDE from 'simplemde'
 import marked from 'marked'
-import { Form, Input, Button} from 'antd';
+import { Form, Input, Button, Modal} from 'antd';
 const FormItem = Form.Item;
 const TextArea = Input.TextArea;
 class Publish extends Component {
     constructor(props){
         super(props);
         this.state={
-            article: {}
+            article: {},
+            visible: false,
         };
         this.smde = null;
         this.handleSubmit = this.handleSubmit.bind(this);
     }
     componentDidMount() {
+        if(typeof(webExtensionWallet) === "undefined"){
+            this.showModal();
+            return;
+        }
         this.smde = new SimpleMDE({
             element: document.getElementById('editor').childElementCount,  
             autofocus: true,
@@ -32,6 +37,22 @@ class Publish extends Component {
             },
         })
     }
+    showModal = () => {
+        this.setState({
+          visible: true,
+        });
+      }
+      handleOk = (e) => {
+        window.open('https://github.com/ChengOrangeJu/WebExtensionWallet');
+        this.setState({
+          visible: false,
+        });
+      }
+      handleCancel = (e) => {
+        this.setState({
+          visible: false,
+        });
+      }
     handleSubmit = (e) => {
         e.preventDefault();
         if(typeof(webExtensionWallet) === "undefined"){
@@ -77,6 +98,16 @@ class Publish extends Component {
                     </FormItem>
                     <Button type="primary" htmlType="submit">发布</Button>
                 </Form>
+                <Modal
+                title="提示"
+                visible={this.state.visible}
+                onOk={this.handleOk}
+                onCancel={this.handleCancel}
+                okText="去下载"
+                cancelText="取消"
+                >
+                <p>Please install WebExtensionWallet to use oasis blog</p>
+                </Modal>
             </div>
         )
     }

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Input, List, Avatar, Pagination } from 'antd';
+import { Input, List, Avatar, Pagination, Modal } from 'antd';
 import { Link } from "react-router-dom";
 const Search = Input.Search;
 export default class Home extends Component {
@@ -8,11 +8,15 @@ export default class Home extends Component {
         this.state={
             articles: [],
             total: 0,
+            visible: false,
         }
         this.searchArticle = this.searchArticle.bind(this);
     }
     componentDidMount(){
-        
+        if(typeof(webExtensionWallet) === "undefined"){
+            this.showModal();
+            return;
+        }
         const self = this;
         // 查询接口 -》 set articles searchByTitleKeywords
         var callArgs = "[\"10\",\"0\"]"; //in the form of ["args"]
@@ -25,6 +29,22 @@ export default class Home extends Component {
                 })
             }      //指定回调函数
         });
+    }
+    showModal = () => {
+      this.setState({
+        visible: true,
+      });
+    }
+    handleOk = (e) => {
+      window.open('https://github.com/ChengOrangeJu/WebExtensionWallet');
+      this.setState({
+        visible: false,
+      });
+    }
+    handleCancel = (e) => {
+      this.setState({
+        visible: false,
+      });
     }
     searchArticle(value) {
         const self = this;
@@ -71,6 +91,16 @@ export default class Home extends Component {
             }
             
             <Pagination defaultCurrent={1} total={this.state.total} onChange={this.changePage}/>
+            <Modal
+            title="提示"
+            visible={this.state.visible}
+            onOk={this.handleOk}
+            onCancel={this.handleCancel}
+            okText="去下载"
+            cancelText="取消"
+            >
+            <p>Please install WebExtensionWallet to use oasis blog</p>
+            </Modal>
             </div>
         )
     }
