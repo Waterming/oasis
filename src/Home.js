@@ -9,66 +9,110 @@ export default class Home extends Component {
             articles: [],
             total: 0,
             visible: false,
+            input:'',
+            pageSize: 10,
         }
         this.searchArticle = this.searchArticle.bind(this);
+        this.changePage = this.changePage.bind(this);
+        this.getTotal = this.getTotal.bind(this);
     }
     componentDidMount(){
-        if(typeof(webExtensionWallet) === "undefined"){
-            this.showModal();
-            return;
-        }
-        const self = this;
         // 查询接口 -》 set articles searchByTitleKeywords
-        var callArgs = "[\"10\",\"0\"]"; //in the form of ["args"]
-        nebPay.simulateCall(dappAddress, "0", "iterate", callArgs, {    //使用nebpay的simulateCall接口去执行get查询, 模拟执行.不发送交易,不上链
-            listener: function(res){
-                const articles = JSON.parse(res.result);
-                self.setState({
-                    articles,
-                    total: articles.length
-                })
-            }      //指定回调函数
+       this.searchArticle("", this.state.pageSize, 0);
+      this.getTotal();
+
+    }
+    getTotal() {
+        var value = "0";
+        var nonce = "0";
+        var gas_price = "1000000";
+        var gas_limit = "2000000";
+        var callFunction = "count";
+        var callArgs = `[""]`; // in the form of ["args"]
+        var contract = {
+            "function": callFunction,
+            "args": callArgs
+        };
+        neb.api.call(from, dappAddress, value, nonce, gas_price, gas_limit, contract).then((res) => {
+             this.setState({
+                 total: parseInt(res.result)
+             })
         });
     }
-    showModal = () => {
-      this.setState({
-        visible: true,
-      });
-    }
-    handleOk = (e) => {
-      window.open('https://github.com/ChengOrangeJu/WebExtensionWallet');
-      this.setState({
-        visible: false,
-      });
-    }
-    handleCancel = (e) => {
-      this.setState({
-        visible: false,
-      });
-    }
-    searchArticle(value) {
-        const self = this;
-        // 查询接口 -》 set articles searchByTitleKeywords
-        var callArgs = "[\"forever\",\"" + value + "\"]"; //in the form of ["args"]
-        nebPay.simulateCall(dappAddress, "0", "searchByTitleKeywords", callArgs, {    //使用nebpay的simulateCall接口去执行get查询, 模拟执行.不发送交易,不上链
-            listener: function(res){
+    searchArticle(input,limit=10,offset=0) {
+        if(input){
+            if(/n1/.test(input)){
+                this.searchByAddress(input, limit, offset);
+            }else {
+                this.searchByTitleKeywords(input);
+            }
+        }else {
+            var value = "0";
+            var nonce = "0";
+            var gas_price = "1000000";
+            var gas_limit = "2000000";
+            var callFunction = "iterate";
+            var callArgs = `["${limit}", "${offset}"]`; // in the form of ["args"]
+            var contract = {
+                "function": callFunction,
+                "args": callArgs
+            };
+            neb.api.call(from, dappAddress, value, nonce, gas_price, gas_limit, contract).then((res) => {
                 const articles = JSON.parse(res.result);
-                console.log(articles[0])
-                self.setState({
+                        this.setState({
+                            articles,
+                        })
+            });
+        }
+        
+    }
+    searchByAddress(input, limit, offset){
+        var value = "0";
+        var nonce = "0";
+        var gas_price = "1000000";
+        var gas_limit = "2000000";
+        var callFunction = "searchByAddress";
+        var callArgs = `["${input}","${limit}","${offset}"]`; // in the form of ["args"]
+        var contract = {
+            "function": callFunction,
+            "args": callArgs
+        };
+        neb.api.call(from, dappAddress, value, nonce, gas_price, gas_limit, contract).then((res) => {
+            const articles = JSON.parse(res.result);
+                this.setState({
+                    articles,
+                })
+        });
+    }
+    searchByTitleKeywords(input){
+        // 查询接口 -》 set articles searchByTitleKeywords
+        var value = "0";
+        var nonce = "0";
+        var gas_price = "1000000";
+        var gas_limit = "2000000";
+        var callFunction = "searchByTitleKeywords";
+        var callArgs = `["forever","${input}"]`; // in the form of ["args"]
+        var contract = {
+            "function": callFunction,
+            "args": callArgs
+        };
+        neb.api.call(from, dappAddress, value, nonce, gas_price, gas_limit, contract).then((res) => {
+            const articles = JSON.parse(res.result);
+                this.setState({
                     articles,
                     total: articles.length
                 })
-            }      //指定回调函数
         });
     }
     changePage(page, pageSize){
         console.log(page)
+        this.searchArticle(this.state.input,pageSize, (page-1) * pageSize)
     }
     render() {
         return (
             <div className="App">
             <div className="searchPanel">
-            <Search placeholder="输入标题关键字" enterButton="搜索" size="large" onSearch={this.searchArticle}/>
+            <Search placeholder="输入标题关键字或星云链钱包地址" enterButton="搜索" size="large" onSearch={(val) => {this.setState({input:val});this.searchArticle(val);} }/>
             </div>
             {
                 this.state.articles.length === 0 ? 
@@ -90,17 +134,7 @@ export default class Home extends Component {
                 />
             }
             
-            <Pagination defaultCurrent={1} total={this.state.total} onChange={this.changePage}/>
-            <Modal
-            title="提示"
-            visible={this.state.visible}
-            onOk={this.handleOk}
-            onCancel={this.handleCancel}
-            okText="去下载"
-            cancelText="取消"
-            >
-            <p>Please install WebExtensionWallet to use oasis blog</p>
-            </Modal>
+            <Pagination defaultCurrent={1} total={this.state.total} onChange={this.changePage} pageSize={this.state.pageSize}/>
             </div>
         )
     }

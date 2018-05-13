@@ -56,13 +56,13 @@ class Publish extends Component {
     handleSubmit = (e) => {
         e.preventDefault();
         if(typeof(webExtensionWallet) === "undefined"){
-            alert('请安装 插件')
+            this.showModal();
             return;
         }
         const articleData = {
             title: this.props.form.getFieldsValue().title,
             contents: this.smde.value(),
-            autor: this.props.form.getFieldsValue().autor,
+            autor: this.props.form.getFieldsValue().autor || "oasis_author",
         };
         let argArray = new Array();
         argArray.push(articleData.title);
@@ -76,7 +76,8 @@ class Publish extends Component {
     render() {
         return (
             <div className="App">
-                <Form onSubmit={this.handleSubmit}>
+                <div>
+                <Form>
                     <FormItem label="文章标题">
                         {this.props.form.getFieldDecorator('title', {
                             rules: [{ required: true, message: '请输入标题' }],
@@ -86,9 +87,7 @@ class Publish extends Component {
                         
                     </FormItem>
                     <FormItem label="作者">
-                        {this.props.form.getFieldDecorator('autor', {
-                            rules: [{ required: true, message: '请输入名字' }],
-                        })(
+                        {this.props.form.getFieldDecorator('autor')(
                             <Input placeholder="输入名字" />
                         )}
                         
@@ -96,8 +95,9 @@ class Publish extends Component {
                     <FormItem label="文章内容">
                         <TextArea id="editor" rows={20} />
                     </FormItem>
-                    <Button type="primary" htmlType="submit">发布</Button>
                 </Form>
+                </div>
+                <Button type="primary" onClick={this.handleSubmit} >发布</Button>
                 <Modal
                 title="提示"
                 visible={this.state.visible}
@@ -106,7 +106,7 @@ class Publish extends Component {
                 okText="去下载"
                 cancelText="取消"
                 >
-                <p>Please install WebExtensionWallet to use oasis blog</p>
+                <p>请安装 chrome星云链钱包 插件</p>
                 </Modal>
             </div>
         )

@@ -14,10 +14,16 @@
         <div id="root"></div> 
   </body>
   <script src="./nebPay.js"></script>
+  <script src="./nebulas.js"></script>
   <script>
+        var nebulas = require("nebulas");
         var NebPay = require("nebpay");
         var nebPay = new NebPay();
-        var dappAddress = "n1tPNPNXCKj2CwHasmCQu4rJTSP6BV1oSod";
+        var Account = nebulas.Account;
+        var dappAddress = "n1qgXvQYnR9GM5TdYc49u5bhnosV8LTyc14";
+        var from = Account.NewAccount().getAddressString();
+        var neb = new nebulas.Neb();
+        neb.setRequest(new nebulas.HttpRequest("https://mainnet.nebulas.io"));
       </script>
   <!-- 引入公用文件 -->
   <script src="/common.js"></script>

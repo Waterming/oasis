@@ -9,10 +9,11 @@ import Publish from './src/Publish';
 function App() {
   return (
     <Router>
-      <div style={{height: '100%'}}>
+      <div style={{height: 'auto',position:'relative',minHeight: '100%'}}>
       <header>
-        <div className="logo">Oasis Blog</div>
+        <Link className="logo" to="/home">Oasis Blog</Link>
         <nav>
+          <Link className="navitem" to="/home" >首页</Link>
           <Link className="navitem" to="/publish" >发表</Link>
         </nav>
       </header>
@@ -25,7 +26,7 @@ function App() {
           <Redirect from="/" to="/home" />
           </Switch>
         </div>
-        <div className="sider">
+        {/* <div className="sider">
           <h3>友情链接</h3>
           <ul>
             <li><a href="">百度</a></li>
@@ -33,9 +34,10 @@ function App() {
             <li><a href="">百度</a></li>
             <li><a href="">百度</a></li>
           </ul>
-        </div>
+        </div> */}
       </div>
       <footer>
+        基于星云链的博客，永久保存你的日志 <br/> 
         Copyright © 2018
       </footer>
       </div>
