@@ -20,7 +20,8 @@ class Publish extends Component {
             return;
         }
         this.smde = new SimpleMDE({
-            element: document.getElementById('editor').childElementCount,  
+            element: document.getElementById('editor').childElementCount,
+            autoDownloadFontAwesome: false,
             autofocus: true,
             autosave: true,
             previewRender: function(plainText) {
