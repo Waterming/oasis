@@ -70,19 +70,47 @@ class Publish extends Component {
         argArray.push(articleData.autor);
         argArray.push(articleData.contents);
         let callArgs = JSON.stringify(argArray);
-        nebPay.call(dappAddress, "0", "save", callArgs, {    //使用nebpay的call接口去调用合约,
+        var serialNumber;
+        serialNumber = nebPay.call(dappAddress, "0", "save", callArgs, {    //使用nebpay的call接口去调用合约,
+            callback: NebPay.config.testnetUrl,
             listener: (res) => {
                 // console.log("response of push: " + JSON.stringify(res));
-                const modal = Modal.success({
+                if (res && res.txhash) {
+                } else {
+                  const modal = Modal.error({
                     title: '提示',
-                    content: '发布成功,请等待交易成功后刷新',
-                });
-                setTimeout(() => {
-                    modal.destroy();
-                    this.props.history.push(`/home`)
-                }, 3000);
+                    content: '发布终止',
+                  });
+                }
             }
         });
+        const waitmodal = Modal.success({
+            title: '提示',
+            content: '正在提交中...',
+        });
+        let intervalQuery = setInterval(() => {
+            nebPay.queryPayInfo(serialNumber,{callback: NebPay.config.testnetUrl})   //search transaction result from server (result upload to server by app)
+              .then((resp) => {
+                console.log("交易结果: " + resp);
+                var respObject = JSON.parse(resp);
+      
+                if(respObject.code === 0){
+                    if(respObject.data.status === 1) {
+                        waitmodal.destroy();
+                        const modal = Modal.success({
+                            title: '提示',
+                            content: '发布成功',
+                        });
+                      clearInterval(intervalQuery);
+                      this.props.history.push(`/home`);
+                    }
+                    
+                }
+              })
+              .catch((err) => {
+                clearInterval(intervalQuery);
+              });
+          }, 10000);
       }
     render() {
         return (
