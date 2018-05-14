@@ -71,7 +71,17 @@ class Publish extends Component {
         argArray.push(articleData.contents);
         let callArgs = JSON.stringify(argArray);
         nebPay.call(dappAddress, "0", "save", callArgs, {    //使用nebpay的call接口去调用合约,
-            listener: function(res){console.log("response of push: " + res)}
+            listener: (res) => {
+                // console.log("response of push: " + JSON.stringify(res));
+                const modal = Modal.success({
+                    title: '提示',
+                    content: '发布成功,请等待交易成功后刷新',
+                });
+                setTimeout(() => {
+                    modal.destroy();
+                    this.props.history.push(`/home`)
+                }, 3000);
+            }
         });
       }
     render() {
