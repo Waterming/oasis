@@ -11,6 +11,7 @@ export default class Home extends Component {
             visible: false,
             input:'',
             pageSize: 10,
+            start: 0,
         }
         this.searchArticle = this.searchArticle.bind(this);
         this.changePage = this.changePage.bind(this);
@@ -18,8 +19,14 @@ export default class Home extends Component {
     }
     componentDidMount(){
         // 查询接口 -》 set articles searchByTitleKeywords
-       this.searchArticle("", this.state.pageSize, 0);
-      this.getTotal();
+      this.getTotal().then(() => {
+        const {pageSize, total} = this.state;
+        let start = 0;
+        if(total >= pageSize){
+            start = total - pageSize;
+        }
+        this.searchArticle("", pageSize, start);
+      });
 
     }
     getTotal() {
@@ -33,11 +40,15 @@ export default class Home extends Component {
             "function": callFunction,
             "args": callArgs
         };
-        neb.api.call(from, dappAddress, value, nonce, gas_price, gas_limit, contract).then((res) => {
-             this.setState({
-                 total: parseInt(res.result)
-             })
-        });
+        return new Promise((resolve,reject) => {
+            neb.api.call(from, dappAddress, value, nonce, gas_price, gas_limit, contract).then((res) => {
+                this.setState({
+                    total: parseInt(res.result)
+                },resolve);
+                
+           });
+        })
+        
     }
     searchArticle(input,limit=10,offset=0) {
         if(input){
@@ -58,7 +69,7 @@ export default class Home extends Component {
                 "args": callArgs
             };
             neb.api.call(from, dappAddress, value, nonce, gas_price, gas_limit, contract).then((res) => {
-                const articles = JSON.parse(res.result);
+                const articles = JSON.parse(res.result).reverse();
                         this.setState({
                             articles,
                         })
@@ -78,7 +89,7 @@ export default class Home extends Component {
             "args": callArgs
         };
         neb.api.call(from, dappAddress, value, nonce, gas_price, gas_limit, contract).then((res) => {
-            const articles = JSON.parse(res.result);
+            const articles = JSON.parse(res.result).reverse();;
                 this.setState({
                     articles,
                 })
@@ -106,7 +117,20 @@ export default class Home extends Component {
     }
     changePage(page, pageSize){
         console.log(page)
-        this.searchArticle(this.state.input,pageSize, (page-1) * pageSize)
+        // this.searchArticle(this.state.input,pageSize, this.state.start - pageSize)
+        this.getTotal().then(() => {
+          const {total} = this.state;
+          let start = 0;
+          let size = pageSize;
+          if(total >= pageSize){
+              if(total - pageSize * page > 0){
+                start = total - pageSize * page;
+              }else {
+                  size = total - (pageSize * page ) + pageSize;
+              }
+          }
+          this.searchArticle("", size, start);
+        });
     }
     render() {
         return (
