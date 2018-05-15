@@ -1,5 +1,5 @@
-dist/common.js
+dist/js/common.js
 dist/index.css
-dist/index.js
+dist/js/index.js
 node_modules
 .DS_Store
