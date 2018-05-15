@@ -18,10 +18,24 @@
   var NebPay = require("nebpay");
   var nebPay = new NebPay();
   var Account = nebulas.Account;
-  var dappAddress = "n1qgXvQYnR9GM5TdYc49u5bhnosV8LTyc14";
+  var netType = "main";  // 环境配置 test or main
+  var config = {
+    test: {
+      address: "n21xgSs9WipHtfomjac55hRCCm7BevyWy2g",
+      request: "https://testnet.nebulas.io",
+      callBackObj: NebPay.config.testnetUrl
+    },
+    main: {
+      address: "n1mxjQTuaVTJttSTQAv3vWaBZm3Qus3ZM7n",
+      request: "https://mainnet.nebulas.io",
+      callBackObj: NebPay.config.mainnetUrl
+    }
+  };
+  var dappAddress = config[netType].address;
+
   var from = Account.NewAccount().getAddressString();
   var neb = new nebulas.Neb();
-  neb.setRequest(new nebulas.HttpRequest("https://mainnet.nebulas.io"));
+  neb.setRequest(new nebulas.HttpRequest(config[netType].request));
 </script>
 <script src="common.js"></script>
 <script src="index.js"></script>

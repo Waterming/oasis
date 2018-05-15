@@ -72,7 +72,7 @@ class Publish extends Component {
         let callArgs = JSON.stringify(argArray);
         var serialNumber;
         serialNumber = nebPay.call(dappAddress, "0", "save", callArgs, {    //使用nebpay的call接口去调用合约,
-            callback: NebPay.config.testnetUrl,
+            callback: config[netType].callBackObj,
             listener: (res) => {
                 // console.log("response of push: " + JSON.stringify(res));
                 if (res && res.txhash) {
@@ -89,7 +89,7 @@ class Publish extends Component {
             content: '正在提交中...',
         });
         let intervalQuery = setInterval(() => {
-            nebPay.queryPayInfo(serialNumber,{callback: NebPay.config.testnetUrl})   //search transaction result from server (result upload to server by app)
+            nebPay.queryPayInfo(serialNumber,{callback: config[netType].callBackObj})   //search transaction result from server (result upload to server by app)
               .then((resp) => {
                 console.log("交易结果: " + resp);
                 var respObject = JSON.parse(resp);
