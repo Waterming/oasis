@@ -102,7 +102,7 @@ class Publish extends Component {
                             content: '发布成功',
                         });
                       clearInterval(intervalQuery);
-                      this.props.history.push(`/home`);
+                      this.props.history.push(`/`);
                     }
                     
                 }

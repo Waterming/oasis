@@ -151,7 +151,7 @@ export default class Home extends Component {
                     <List.Item>
                         <List.Item.Meta
                         title={<Link to={`/article/${item.id}`} >{item.title}</Link>}
-                        description={`作者：${item.authorName}    日期：${dateStr}`}
+                        description={<p><span style={{marginRight: '40px'}}>作者：{item.authorName}</span><span>日期：{dateStr}</span></p>}
                         />
                     </List.Item>
                     )}}
